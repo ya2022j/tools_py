@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+
+        <p v-if="errored" v-cloak>{{ error }}</p>
+        <p v-if="loading" v-cloak>Loading...</p>
+
+        <div v-else>
+            <ul>
+                <li v-for="todo in todos" v-cloak>{{todo.title}}</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.6/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.18.0/dist/axios.min.js"></script>
+
+    <script>
+
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    loading: true,
+                    errored: false,
+                    error: null,
+                    todos: null,
+                }
+            },
+            created() {
+                let vm = this
+                axios.get('http://127.0.0.1:5000', {
+                    params: {
+                        userId: '1'
+                    }
+                })
+                    .then(response => {
+                        vm.todos = response.data
+                    })
+                    .catch(err => {
+                        vm.errored = true,
+                        vm.error = err
+                    })
+                    .finally(() => vm.loading = false)
+            }
+        })
+
+    </script>
+
+</body>
+
+</html>
